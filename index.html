@@ -12,6 +12,7 @@
     <script src='https://www.mapbox.com/mapbox.js/assets/data/us-states.js'></script>
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="detectmobile.js"></script>
     
     <style>
     body, html {
@@ -52,8 +53,6 @@
       </main>
     </div>
 
-    
-
     <script>
 
     // Get California from Mapbox us-states.js
@@ -79,8 +78,15 @@
       clickable: false
       });
 
+    // Detect Mobile
+    var zoom = 6;
+    if ($.browser.mobile) {
+      zoom = 5;
+      console.log($.browser.mobile);
+    }
+
     // Start map
-    var map = L.map('map', { zoomControl: false }).setView([36.6,-120], 6);
+    var map = L.map('map', { zoomControl: false }).setView([36.6,-120], zoom);
 
     caliLayer.addTo(map);
 
