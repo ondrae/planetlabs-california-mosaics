@@ -12,8 +12,7 @@
     <script src='https://www.mapbox.com/mapbox.js/assets/data/us-states.js'></script>
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="detectmobile.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-browser/0.1.0/jquery.browser.min.js"></script>
     <style>
     body, html {
       width: 100%;
@@ -78,15 +77,18 @@
       clickable: false
       });
 
-    // Detect Mobile
+    // Init map view
     var zoom = 6;
+    var coords = [36.6,-120]
+
+    // Detect Mobile
     if ($.browser.mobile) {
       zoom = 5;
-      console.log($.browser.mobile);
+      coords = [30,-120]
     }
 
     // Start map
-    var map = L.map('map', { zoomControl: false }).setView([36.6,-120], zoom);
+    var map = L.map('map', { zoomControl: false }).setView(coords, zoom);
 
     caliLayer.addTo(map);
 
@@ -113,15 +115,26 @@
             maxZoom: 18
           });
 
+          // Find exisitng layer
+          var oldLayer;
           map.eachLayer(function(layer) {
-            if (layer instanceof L.tileLayer) {
-              console.log("Removing current layer.");
-              map.removeLayer(layer);
+            if (layer._url) {
+              oldLayer = layer;
             }
           });
 
+          // Add new chosen layer
           console.log("Adding " + data.title + " to map.");
           planetTiles.addTo(map);
+
+          // Remove old layer after the new one has donwloaded
+          if (oldLayer) {
+            var removeExsitingLayer = function(){
+              console.log("Removing previous layer from the map.");
+              map.removeLayer(oldLayer);
+            }
+            setTimeout(removeExsitingLayer, 3000);
+          }
         }
       });
     }
